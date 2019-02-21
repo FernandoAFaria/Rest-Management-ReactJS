@@ -1,0 +1,62 @@
+{
+    "RESTURANT_NAME": "My Resturant",
+
+    "food": [
+        {
+            "food": "Hotdog",
+            "cost": 2.50
+        },
+        {
+            "food": "Pizza",
+            "cost": 1.50
+        },
+        {
+            "food": "Hamburger",
+            "cost": 3.50
+        },
+        {
+            "food": "French Fries",
+            "cost": 2.50
+        },
+        {
+            "food": "CheeseDog",
+            "cost": 3.00
+        },
+        {
+            "food": "Soup",
+            "cost": 3.50
+        },
+        {
+            "food": "Taco",
+            "cost": 1.00
+        },
+        {
+            "food": "Misc",
+            "cost": 0.50
+        }
+       
+    ],
+    "drinks" : [
+        {
+            "food": "Pepsi",
+            "cost": 1.50
+        },
+        {
+            "food": "Diet Pepsi",
+            "cost": 2.50
+        },
+        {
+            "food": "Ice Tea",
+            "cost": 2.50
+        },
+        {
+            "food": "Water",
+            "cost": 0.00
+        }
+        ,
+        {
+            "food": "Coffee",
+            "cost": 1.00
+        }
+    ]
+}

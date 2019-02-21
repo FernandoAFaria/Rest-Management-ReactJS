@@ -1,17 +1,44 @@
 {
   "name": "resturantmanagement",
+  "main": "public/electron.js",
+  "productName": "Free Resturant Management Software using React/Electron",
+  "author": "Fernando Faria",
+  "homepage": "./",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "concurrently": "^4.1.0",
+    "electron-is-dev": "^1.0.1",
+    "express": "^4.16.4",
     "react": "^16.8.2",
     "react-dom": "^16.8.2",
-    "react-scripts": "2.1.5"
+    "react-scripts": "2.1.5",
+    "wait-on": "^3.2.0"
+  },
+  "devDependencies": {
+    "electron": "^4.0.5",
+    "electron-builder": "^20.38.5",
+    "electron-packager": "^13.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
+    "build-windows": "electron-packager . electron-tutorial-app --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Resturant Management Free\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "electron-dev": "concurrently \"BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
+    "electron-pack": "build --em.main=build/electron.js",
+    "preelectron-pack": "npm build"
+  },
+  "build": {
+    "appId": "free_resturant_management",
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    }
   },
   "eslintConfig": {
     "extends": "react-app"
