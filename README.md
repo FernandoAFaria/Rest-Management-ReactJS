@@ -4,7 +4,7 @@
 # How To Run:
 
 npm install &
-npm run build
+npm start
 
 # ****How to build using Electron for desktop use*****
 
