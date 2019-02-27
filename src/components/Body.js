@@ -26,7 +26,6 @@ export default class Body extends Component {
             let totalcost = this.props.tables[id].totalPrice.reduce((a,b) => a+b) * 1.06;
             this.props.handleVacant(id);
             this.props.handleClearOrder(id);
-            console.log(totalcost)
             this.props.handleTotalCollected(totalcost)
             this.setState({
                 active: false
@@ -170,6 +169,8 @@ export default class Body extends Component {
                                             {table.id + 1}
                                         </button>
                                     );
+                                }else{
+                                    return '';
                                 }
                             })}
                         </div>
