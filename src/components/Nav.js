@@ -5,7 +5,7 @@ export default function Nav(props) {
         <div>
             <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
                 <a className="navbar-brand" href="#home">
-                    Resturant Management Free
+                    Restaurant Management Free
                 </a>
                 <button
                     className="navbar-toggler"
