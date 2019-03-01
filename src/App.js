@@ -1,15 +1,21 @@
 import React, { Component } from "react";
 import Header from "./components/Header";
 import Body from "./components/Body";
-
+import data from './initial_setup.json';
+import Nav from './components/Nav';
 import "./App.css";
+
+
+let numOfTables = data.numberOfTables;
+
+
 //SETS THE INITIAL STATE
 let initialState = {
     completedTables: [],
     currentTables: [],
     totalCollected: 0
 };
-for (let i = 0; i <= 19; i++) {
+for (let i = 0; i < numOfTables; i++) {
     initialState.currentTables.push({
         id: i,
         occupied: false,
@@ -18,12 +24,7 @@ for (let i = 0; i <= 19; i++) {
     });
 }
 
-initialState.currentTables.push({
-    id: 20,
-    occupied: null,
-    order: [],
-    totalPrice: [0]
-});
+
 
 class App extends Component {
     constructor() {
@@ -100,8 +101,8 @@ class App extends Component {
 
     render() {
         return (
-            <div className="App" style={{minHeight: '720px'}}>
-               
+            <div className="App bg-light" style={{minHeight: '720px', overflowX: 'hidden'}}>
+               <Nav />
                 <Header totalCollected={this.state.totalCollected} />
                 <Body
                     tables={this.state.currentTables}

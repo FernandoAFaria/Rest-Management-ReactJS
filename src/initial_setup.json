@@ -1,5 +1,9 @@
 {
-    "RESTURANT_NAME": "My Resturant",
+    "restaurantName": "My Rest",
+    "numberOfTables" : 20,
+    "taxRate" : 0.06,
+    
+
 
     "food": [
         {

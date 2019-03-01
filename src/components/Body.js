@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 import data from "../initial_setup.json";
+let tax = data.taxRate;
+const restaurantName = data.restaurantName;
+
 
 
 export default class Body extends Component {
@@ -7,8 +10,8 @@ export default class Body extends Component {
         super();
 
         this.state = {
-            selectedTable: 20,
-
+            selectedTable: 0,
+            printed: false
         };
     }
     handleSelectTable = id => {
@@ -19,44 +22,86 @@ export default class Body extends Component {
     handleCheckinorCheckout = id => {
         if (this.props.tables[id].occupied === false) {
             this.props.handleOccupied(id);
-            this.setState({
-                active: true
-            });
+            // this.setState({
+            //     active: true
+            // });
         } else {
-            let totalcost = this.props.tables[id].totalPrice.reduce((a,b) => a+b) * 1.06;
+            let totalcost =
+                this.props.tables[id].totalPrice.reduce((a, b) => a + b) * 1.06;
             this.props.handleVacant(id);
             this.props.handleClearOrder(id);
-            this.props.handleTotalCollected(totalcost)
-            this.setState({
-                active: false
-                
-            });
+            this.props.handleTotalCollected(totalcost);
+            // this.setState({
+            //     active: false
+            // });
         }
     };
     handleRemoveItem = (id, item) => {
         this.props.handleRemoveItemFromOrder(id, item);
     };
 
+    handlePrint = () => {
+        this.setState({
+            printed: true
+        });
+        let wnd = window.open("about:blank", "", "_blank");
+        let printData = this.props.tables[this.state.selectedTable].order.map(
+            (item, index) => {
+                return `<tr className='row'><td>${item} -</td><td> $${this.props.tables[
+                    this.state.selectedTable
+                ].totalPrice[index + 1].toFixed(2)}</td><tr>`;
+            }
+        );
+        let newData = printData.join().toString();
+
+        let subtotal = this.props.tables[
+            this.state.selectedTable
+        ].totalPrice.reduce((a, b) => a + b);
+        let taxAmount = subtotal * tax;
+        let totalAmount = subtotal + taxAmount;
+        let printField = `
+            <div className='container'>
+            <h3>${restaurantName}</h3>
+            <h4 style="margin-bottom: -5px">Table # ${this.state.selectedTable +
+                1}</h4>
+            <div style="width: 120px; height: 10px; position: aboslute; background: black; transform: translateY(19px)"></div>
+            <table className="table" style="margin-top: 20px;">
+            ${newData}
+            <tr><td><hr></td><td><hr></td></tr>
+            <tr>
+            <td><strong>Subtotal:</td><td> $${subtotal.toFixed(2)}</strong></td>
+            </tr>
+            <tr>
+            <td><strong>Tax:</td><td> $${taxAmount.toFixed(2)}</strong></td>
+            </tr>
+            <tr>
+            <td><strong>Total: </td><td>$${totalAmount.toFixed(2)}</strong></td>
+            </tr>
+            </table>
+            </div>
+            `;
+
+        wnd.document.write(printField);
+        wnd.print();
+    };
+
     render() {
         return (
-            <div className="container-fluid">
-
-            {/* LEFT COLUMN */}
+            <div
+                className="container-fluid"
+                style={{padding: "25px 10px", marginTop: "-45px" }}
+            >
+                {/* LEFT COLUMN */}
                 <div className="row">
                     <div
-                        style={{ minHeight: "780px", margin: "0 15px" }}
-                        className="col-3 bg-success pt-3"
+                        style={{ minHeight: '600px', margin: "0 5px" }}
+                        className="col-2 bg-info pt-3"
                     >
                         <div className="text-center">
-                            <h4>
-                                Table #
-                                {this.state.selectedTable === 20
-                                    ? "0"
-                                    : `${this.state.selectedTable + 1}`}
-                            </h4>
+                            <h5 className="mb-5">Table #{this.state.selectedTable + 1}</h5>
                             <button
-                                className="btn btn-lg  btn-warning mt-5 mb-5 pt-2 pb-2 px-2 shadow"
-                                style={{fontSize: '1.4rem'}}
+                                className="btn btn-lg mb-2 btn-danger pt-2 pb-2 px-3 shadow"
+                                style={{ fontSize: "1rem" }}
                                 onClick={() =>
                                     this.handleCheckinorCheckout(
                                         this.state.selectedTable
@@ -68,12 +113,30 @@ export default class Body extends Component {
                                     ? "Check-Out"
                                     : "Check-In"}
                             </button>
+
+                            {this.props.tables[this.state.selectedTable]
+                                .totalPrice.length > 1 ? (
+                                <button
+                                    className="btn mb-2 btn-lg btn-success pt-2 pb-2 px-4 ml-2 shadow"
+                                    onClick={() => this.handlePrint()}
+                                >
+                                    Print
+                                </button>
+                            ) : (
+                                <button
+                                    className="btn mb-2 btn-lg btn-success pt-2 pb-2 px-4 ml-2 shadow"
+                                    disabled
+                                    onClick={() => this.handlePrint()}
+                                >
+                                    Print
+                                </button>
+                            )}
                         </div>
-                        <table className="table table-light">
+                        <table className="table table-light mt-5">
                             <tbody>
                                 <tr>
                                     <td>Food Amount:</td>
-                                    <td>
+                                    <td id="subtotal">
                                         $
                                         {this.props.tables[
                                             this.state.selectedTable
@@ -82,27 +145,28 @@ export default class Body extends Component {
                                 </tr>
                                 <tr>
                                     <td>Tax:</td>
-                                    <td>
+                                    <td id="taxAmount">
                                         $
                                         {(
                                             this.props.tables[
                                                 this.state.selectedTable
                                             ].totalPrice.reduce(
                                                 (a, b) => a + b
-                                            ) * 0.06
+                                            ) * tax
                                         ).toFixed(2)}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>Total:</td>
-                                    <td>
+                                    <td id="total">
                                         $
                                         {(
                                             this.props.tables[
                                                 this.state.selectedTable
                                             ].totalPrice.reduce(
                                                 (a, b) => a + b
-                                            ) * 1.06
+                                            ) *
+                                            (1 + tax)
                                         ).toFixed(2)}
                                     </td>
                                 </tr>
@@ -118,7 +182,7 @@ export default class Body extends Component {
                                         <tr key={index}>
                                             <td>
                                                 <span
-                                                    className="btn btn-danger mr-5"
+                                                    className="btn btn-danger mr-1"
                                                     onClick={() =>
                                                         this.handleRemoveItem(
                                                             this.state
@@ -132,7 +196,12 @@ export default class Body extends Component {
                                                 {item}
                                             </td>
                                             <td>
-                                                ${this.props.tables[this.state.selectedTable].totalPrice[index + 1].toFixed(2)}
+                                                $
+                                                {this.props.tables[
+                                                    this.state.selectedTable
+                                                ].totalPrice[index + 1].toFixed(
+                                                    2
+                                                )}
                                             </td>
                                         </tr>
                                     );
@@ -143,10 +212,10 @@ export default class Body extends Component {
 
                     {/* CENTER TABLE COLUMN */}
                     <div
-                        style={{ minHeight: "780px", margin: "0 15px" }}
-                        className="col-5 bg-secondary"
+                        style={{ margin: "0 5px" }}
+                        className="col bg-secondary pb-3 px-0"
                     >
-                        <div className=" text-center">
+                        <div className=" text-center pt-3 px-1">
                             {this.props.tables.map(table => {
                                 if (table.id !== 20) {
                                     return (
@@ -157,40 +226,45 @@ export default class Body extends Component {
                                             }
                                             className={
                                                 table.occupied === false
-                                                    ? "btn btn-primary mt-3 mx-3 font-weight-bold"
-                                                    : "btn btn-danger mt-3 mx-3 font-weight-bolder"
+                                                    ? "btn btn-primary mt-3 mx-2 font-weight-bold"
+                                                    : "btn btn-danger mt-3 mx-2 font-weight-bolder"
                                             }
                                             style={{
                                                 width: "80px",
                                                 height: "80px",
-                                                fontSize: '1.2rem'
+                                                fontSize: "1.2rem"
                                             }}
                                         >
                                             {table.id + 1}
                                         </button>
                                     );
-                                }else{
-                                    return '';
+                                } else {
+                                    return "";
                                 }
                             })}
                         </div>
                     </div>
+                    
+                    
+                    {/* RIGHT COLUMN */}
                     <div
-                        style={{ minHeight: "780px", margin: "0 15px" }}
-                        className="col bg-info"
+                        style={{ margin: "0 5px" }}
+                        className="col bg-success"
                     >
-                        <div className="text-center pt-2 px-1">
-                            <h5>Food</h5>
+                        <div className="text-center pt-3 pb-3 px-1">
+                            <h5>
+                                <strong>Food</strong>
+                            </h5>
                             {this.props.tables[this.state.selectedTable]
                                 .occupied
                                 ? data["food"].map((each, index) => {
                                       return (
                                           <button
-                                              className="btn btn-warning mt-4 mx-1"
+                                              className="btn btn-info mt-4 mx-1 px-3"
                                               key={index}
                                               style={{
-                                                  width: "90px",
-                                                  height: "70px"
+                                                  minWidth: "85px",
+                                                  height: "75px"
                                               }}
                                               onClick={() =>
                                                   this.props.handleAddToOrder(
@@ -208,11 +282,11 @@ export default class Body extends Component {
                                 : data["food"].map((each, index) => {
                                       return (
                                           <button
-                                              className="btn btn-secondary mt-4 mx-1"
+                                              className="btn btn-info mt-4 mx-1 px-3"
                                               key={index}
                                               style={{
-                                                  width: "95px",
-                                                  height: "70px"
+                                                  minWidth: "85px",
+                                                  height: "75px"
                                               }}
                                               disabled
                                           >
@@ -221,18 +295,20 @@ export default class Body extends Component {
                                           </button>
                                       );
                                   })}
-                            <hr color="blue" />
-                            <h5>Drinks</h5>
+                            <hr color="red" className="mt-4 mb-4" />
+                            <h5>
+                                <strong>Drinks</strong>
+                            </h5>
                             {this.props.tables[this.state.selectedTable]
                                 .occupied
                                 ? data["drinks"].map((each, index) => {
                                       return (
                                           <button
-                                              className="btn btn-warning mt-4 mx-2"
+                                              className="btn btn-info mt-4 mx-2 px-3"
                                               key={index}
                                               style={{
-                                                  width: "95px",
-                                                  height: "70px"
+                                                  minWidth: "85px",
+                                                  height: "75px"
                                               }}
                                               onClick={() =>
                                                   this.props.handleAddToOrder(
@@ -250,11 +326,11 @@ export default class Body extends Component {
                                 : data["drinks"].map((each, index) => {
                                       return (
                                           <button
-                                              className="btn btn-secondary mt-4 mx-2"
+                                              className="btn btn-info mt-4 mx-2 px-3"
                                               key={index}
                                               style={{
-                                                  width: "90px",
-                                                  height: "70px"
+                                                  minWidth: "85px",
+                                                  height: "75px"
                                               }}
                                               disabled
                                           >

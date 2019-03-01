@@ -1,10 +1,10 @@
 {
-  "name": "resturantmanagement",
+  "name": "restaurantmanager",
   "main": "public/electron.js",
-  "productName": "Free Resturant Management Software using React/Electron",
+  "productName": "Free Restaurant Management Software.",
   "author": "Fernando Faria",
-  "homepage": "./",
-  "version": "0.1.0",
+  "homepage": "/restmanager",
+  "version": "0.1.1",
   "private": true,
   "dependencies": {
     "concurrently": "^4.1.0",
@@ -22,7 +22,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build-windows": "electron-packager . electron-tutorial-app --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Resturant Management Free\"",
+    "build-windows": "electron-packager . restaurant-manager-free --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Resturant Management Free\"",
+    "build-linux": "electron-packager . electron-tutorial-app --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
